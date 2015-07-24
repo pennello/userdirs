@@ -3,9 +3,11 @@
 import os
 
 class UserDirs(object):
-  def __init__(self,prog,xdgstrict=False):
-    self.prog = prog
-    self.xdgstrict = xdgstrict
+  def __init__(self,xdgmode):
+    '''
+    xdgmode can be 'strict', 'compat', or None.
+    '''
+    self.xdgmode = xdgmode
 
   def env(self,key): return os.environ.get('XDG_%s_HOME' % key.upper())
 
@@ -13,20 +15,18 @@ class UserDirs(object):
 
   def join(self,*a): return os.path.join(self.home(),*a)
 
-  def data(self):
-    xdg = self.env('data')
+  def dir(self,env,strict,compat,default):
+    xdg = self.env(env)
     if xdg is not None: return xdg
-    if self.xdgstrict: return self.join('.local','share',self.prog)
-    return self.join('var',self.prog)
+    if self.xdgmode == 'strict': return self.join(*strict)
+    if self.xdgmode == 'compat': return self.join(*compat)
+    return self.join(*default)
+
+  def data(self):
+    return self.dir('data',('.local','share'),('.local','var'),('var',))
 
   def config(self):
-    xdg = self.env('config')
-    if xdg is not None: return xdg
-    if self.xdgstrict: return self.join('.config',self.prog)
-    return self.join('etc',self.prog)
+    return self.dir('config',('.config',),('.local','etc'),('etc',))
 
   def cache(self):
-    xdg = self.env('config')
-    if xdg is not None: return xdg
-    if self.xdgstrict: return self.join('.cache',self.prog)
-    return self.join('tmp',self.prog)
+    return self.dir('cache',('.cache',),('.local','tmp'),('tmp',))
