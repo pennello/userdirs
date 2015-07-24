@@ -4,9 +4,7 @@ import os
 
 class UserDirs(object):
   def __init__(self,xdgmode):
-    '''
-    xdgmode can be 'strict', 'compat', or None.
-    '''
+    '''xdgmode can be 'strict', 'compat', or None.'''
     self.xdgmode = xdgmode
 
   def env(self,key): return os.environ.get('XDG_%s_HOME' % key.upper())
