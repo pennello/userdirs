@@ -7,8 +7,7 @@ import unittest
 from contextlib import contextmanager
 from userdirs import UserDirs
 
-def log(x):
-  sys.stderr.write('%s\n' % x)
+def log(x): sys.stderr.write('%s\n' % x)
 
 fns = 'data','cache','config'
 
