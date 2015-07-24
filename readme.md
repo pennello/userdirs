@@ -7,4 +7,4 @@ TODO
         data:   Not ~/.local/var?
         config: Not ~/.local/etc?
         cache:  Not ~/.local/tmp?
- - Finish readme.
+ - Finish readme, PyDoc.
