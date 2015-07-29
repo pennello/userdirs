@@ -9,41 +9,50 @@ from userdirs import UserDirs
 
 def log(x): sys.stderr.write('%s\n' % x)
 
-fns = 'data','cache','config'
+vartypes = 'data','cache','config'
+testpaths = (
+  ('share',),
+  ('etc',),
+  ('var','cache'),
+  ('lib',),
+  ('tmp',),
+  ('var','db'),
+)
+
+def cleanenv():
+  for var in vartypes:
+    os.environ.pop('XDG_%s_HOME' % var.upper(),'zuul')
 
 @contextmanager
 def whateverctx():
-  for fn in fns:
-    os.environ['XDG_%s_HOME' % fn.upper()] = 'xdg_whatever_%s' % fn
+  for var in vartypes:
+    os.environ['XDG_%s_HOME' % var.upper()] = 'xdg_whatever_%s' % var
   try: yield
-  finally:
-    for fn in fns:
-      del os.environ['XDG_%s_HOME' % fn.upper()]
+  finally: cleanenv()
 
-class TestCase(unittest.TestCase):
-  def test_noenv(self):
-    '''
-    Just run through all modes and methods to make sure nothing blows
-    up.
-    '''
-    modes = (
-      'strict',
-      'compat',
-      None,
-      '_zuul', # "Bad" value.
-    )
-    for mode in modes:
-      u = UserDirs(mode)
-      for fn in fns:
-        x = getattr(u,fn)()
-        log('%s, %s: %s' % (mode,fn,x))
+def logtest():
+  for xdgstrict in True,False:
+    log('xdgstrict %s' % xdgstrict)
+    u = UserDirs(xdgstrict)
+    for var in vartypes:
+      log(getattr(u,var)())
+    for testpath in testpaths:
+      log(u.dir(*testpath))
 
-  def test_env(self):
-    '''
-    Test environment precedence.
-    '''
+class TestNoEnv(unittest.TestCase):
+  def setUp(self): cleanenv()
 
-    with whateverctx():
-      u = UserDirs(None)
-      for fn in fns:
-        log('%s: %s' % (fn, getattr(u,fn)()))
+  def test(self):
+    '''
+    Basically, just run through all the code paths without any
+    environment variable overrides set.
+    '''
+    logtest()
+
+class TestEnv(unittest.TestCase):
+  def test(self):
+    '''
+    Run through all the code paths with environment variable overrides
+    set.
+    '''
+    with whateverctx(): logtest()
