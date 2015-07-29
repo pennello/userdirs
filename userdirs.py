@@ -15,7 +15,7 @@ class XdgSpecial(object):
 class UserDirs(object):
   # normal path -> xdg special
   _special = {
-    ('share',):     XdgSpecial('share', ('.local','share')),
+    ('share',):     XdgSpecial('data', ('.local','share')),
     ('etc',):       XdgSpecial('config',('.config',)),
     ('var','cache'):XdgSpecial('cache', ('.cache',)),
   }
