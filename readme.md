@@ -8,3 +8,4 @@ TODO
         config: Not ~/.local/etc?
         cache:  Not ~/.local/tmp?
  - Finish readme, PyDoc.
+ - Philosophy: There ought to be fewer dotfiles, not more.
