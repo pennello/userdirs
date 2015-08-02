@@ -1,5 +1,12 @@
 # chris 072315
 
+'''UserDirs tests.
+
+At the time of writing, it's not really worth it to make automated
+verification of the correctness of the returned values.  So they're just
+printed for manual verification.
+'''
+
 import os
 import sys
 import unittest
